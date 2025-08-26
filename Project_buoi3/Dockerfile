@@ -1,14 +1,14 @@
-# Sử dụng Tomcat 9 + JDK 11
-FROM tomcat:9.0-jdk11
+FROM tomcat:9.0-jdk17-temurin
 
-# Xóa app mặc định của Tomcat (ROOT)
+# dọn app mặc định
 RUN rm -rf /usr/local/tomcat/webapps/*
 
-# Copy WAR vào Tomcat
-COPY Project_buoi3.war /usr/local/tomcat/webapps/ROOT.war
+# (nếu copy WAR sẵn)
+COPY target/*.war /usr/local/tomcat/webapps/ROOT.war
 
-# Expose cổng 8080
+# 🔇 tắt shutdown port 8005 và giữ HTTP ở 8080
+RUN sed -i 's/Server port="8005"/Server port="-1"/' /usr/local/tomcat/conf/server.xml \
+ && sed -i 's/Connector port="8080"/Connector port="8080"/' /usr/local/tomcat/conf/server.xml
+
 EXPOSE 8080
-
-# Chạy Tomcat
-CMD ["catalina.sh", "run"]
+CMD ["catalina.sh","run"]
